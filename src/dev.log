@@ -1,0 +1,14 @@
+
+> src@0.1.0 dev
+> next dev
+
+▲ Next.js 16.4.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 529ms
+✓ Running next.config.ts took 46ms
+- Cache Components enabled
+- Partial Prefetching enabled
+
+ GET / 200 in 943ms (next.js: 553ms, application-code: 390ms)
+✓ Compiled in 18ms
