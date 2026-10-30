@@ -25,8 +25,8 @@
 | 1 | 1.3 | Build shared UI primitives | NTF-007 | Done |
 | 1 | 1.4 | Build organization workspace shell | NTF-008 | Done |
 | 1 | 1.5 | Build platform owner console shell | NTF-009 | Done |
-| 2 | 2.1 | Configure Supabase clients and local development | NTF-TBD | Not started |
-| 2 | 2.2 | Create initial database migrations and profile model | NTF-TBD | Not started |
+| 2 | 2.1 | Configure Supabase clients and local development | NTF-010 | Done |
+| 2 | 2.2 | Create initial database migrations and profile model | NTF-011 | Done |
 | 2 | 2.3 | Configure Supabase Auth flows | NTF-TBD | Not started |
 | 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-TBD | Not started |
 | 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-TBD | Not started |
