@@ -1,385 +1,245 @@
-# System Architecture
+# System Architecture — Frontend + Managed Services
 
 **Product:** Unified Scheduler  
-**Owner:** CTO  
-**Status:** Proposed baseline — approve stack and provider details before implementation  
-**Version:** 1.0  
+**Architecture decision:** Frontend-first application using Supabase managed services  
+**Status:** Approved direction for implementation planning; verify provider capabilities before enabling production OAuth  
+**Version:** 2.0  
 **Last updated:** 2026-10-31
 
-## 1. Architecture principles
+## 1. Architecture decision
 
-1. The browser is a presentation and interaction layer. It collects input, displays server state, and calls APIs.
-2. The backend is authoritative for availability, booking rules, permissions, validation, tenant boundaries, and provider writes.
-3. A booking link defines two separate calendar sets: **calendars to check** and **one destination calendar to write to**.
-4. All organization-owned data is tenant-scoped. Every query and mutation must enforce `organization_id` from the authenticated context, not from a trusted client-supplied value.
-5. Provider integrations are adapters behind a common calendar-provider interface.
-6. External provider calls are asynchronous where possible and protected by idempotency, retries, timeouts, and reconciliation.
+Build one browser-first application. Do **not** create or maintain a separate Node.js/Express/NestJS backend, custom API server, custom database server, Redis cluster, or job-worker service.
 
-## 2. Proposed technology baseline
+Use:
+- **Next.js + React + TypeScript** for the application and UI.
+- **Supabase** for managed authentication, PostgreSQL database, Row Level Security (RLS), Storage if needed, Realtime where useful, and Edge Functions.
+- **Supabase Edge Functions** only for operations that must execute in a trusted environment: OAuth callbacks/token exchange, provider API calls requiring secrets, booking confirmation, calendar writes, webhook handling, and privileged workflows.
+- **Google Calendar API** and **Zoho Calendar API** as external calendar providers.
+- A managed transactional email provider, selected later, for invitations and booking notifications.
 
-The following is a proposed baseline, not a claim that infrastructure has already been provisioned:
+Edge Functions are small serverless functions deployed to Supabase. They are not a separately operated backend application. Keep them focused; do not recreate a large custom API server inside them.
 
-| Layer | Proposed choice | Responsibility |
+## 2. Responsibility map
+
+| Capability | Where it lives |
+|---|---|
+| Screens, navigation, forms, calendar UI | Next.js frontend |
+| Authentication, sessions, password reset | Supabase Auth |
+| Tenant data and relational records | Supabase PostgreSQL |
+| Tenant row access | PostgreSQL RLS policies |
+| Simple authenticated CRUD | Supabase client + RLS |
+| OAuth authorization-code exchange and refresh tokens | Supabase Edge Functions |
+| Provider credentials and other secrets | Supabase project secrets / secure server-side storage; never browser env vars |
+| Google/Zoho API calls | Supabase Edge Functions |
+| Authoritative availability calculation | Edge Function using authorized database/provider data |
+| Atomic booking confirmation and collision prevention | PostgreSQL transaction/RPC with constraints/locking, invoked through a trusted Edge Function |
+| Calendar event create/update/delete | Edge Function |
+| Provider webhooks | Edge Function endpoint |
+| Email delivery | Edge Function calls selected email provider |
+| Scheduled reminders/reconciliation | Supabase Cron invoking Edge Functions, or an approved managed scheduler |
+| Platform and organization administration UI | Next.js frontend; data access governed by RLS and trusted functions |
+
+Do not put service-role keys, OAuth client secrets, refresh tokens, webhook signing secrets, or provider credentials in browser code, `NEXT_PUBLIC_*` variables, local storage, or client-readable tables.
+
+## 3. Proposed technology baseline
+
+| Layer | Choice | Notes |
 |---|---|---|
-| Web application | Next.js + React + TypeScript | Workspace UI, public booking pages, Owner Console |
-| UI system | Tailwind CSS + shadcn/ui, customized using `design.md` tokens | Accessible reusable UI |
-| API | Node.js + TypeScript service (Next.js route handlers initially or separate service) | Authenticated API and business operations |
-| Database | PostgreSQL | Tenants, users, bookings, links, calendar metadata, audit records |
-| ORM / migrations | Prisma or Drizzle (CTO decision) | Typed persistence and migrations |
-| Cache / locks / jobs | Redis-compatible service + durable queue | Short-lived locks, throttling, jobs, retries |
-| Authentication | Secure server-side session system | Identity, sessions, organization membership |
-| Calendar providers | Google Calendar API and Zoho Calendar API | External calendar reads and writes |
-| Email | Transactional email provider (TBD) | Invitations, confirmations, reminders |
-| Observability | Structured logs, metrics, error reporting | Operations and diagnostics |
+| Web | Next.js, React, TypeScript | App Router; confirm repository conventions first |
+| Styling/components | Tailwind CSS + shadcn/ui, customized to `design.md` | Do not introduce a second design system |
+| Auth | Supabase Auth | Email verification; OAuth/social login only if approved |
+| Database | Supabase PostgreSQL | SQL migrations committed to repository |
+| Authorization | PostgreSQL RLS + narrowly scoped Edge Functions | RLS is mandatory for tenant-owned tables |
+| Serverless trusted operations | Supabase Edge Functions (Deno runtime) | No standalone API service |
+| Database functions | PostgreSQL functions/RPC | Only for atomic database operations; keep readable and tested |
+| Calendar providers | Google Calendar API, Zoho Calendar API | Verify scopes, regions, quotas, and webhook support first |
+| Scheduling | Supabase Cron or managed scheduler | Avoid a self-hosted worker/queue |
+| Email | Managed transactional email provider (TBD) | Select after requirements/cost review |
+| Monitoring | Supabase logs/metrics + frontend error monitoring (TBD) | Never log secrets or private event details |
 
-Do not introduce a second database, queue, ORM, or frontend state framework without an approved task plan and architecture update.
+This is the selected implementation direction, not a claim that Supabase or provider projects are already provisioned. Confirm Supabase plan limits, Edge Function limits, OAuth verification requirements, and provider API behavior before production launch.
 
-## 3. System context and request flow
+## 4. High-level request flow
 
 ```mermaid
-flowchart LR
-  Invitee[Public invitee] --> Web[Web frontend]
-  Member[Organization member] --> Web
-  Owner[Platform owner] --> Web
-  Web --> API[Application API]
-  API --> Auth[Auth and tenant authorization]
-  API --> Services[Domain services]
-  Services --> DB[(PostgreSQL)]
-  Services --> Queue[Job queue]
-  Queue --> Sync[Calendar sync workers]
-  Sync --> Google[Google Calendar API]
-  Sync --> Zoho[Zoho Calendar API]
-  Services --> Mail[Email provider]
-  API --> Hooks[Webhook delivery service]
-  Hooks --> External[Customer applications]
+flowchart TD
+  User[Member or public invitee] --> UI[Next.js frontend]
+  UI --> Auth[Supabase Auth]
+  UI --> DB[(Supabase PostgreSQL)]
+  DB --> RLS[Row Level Security]
+  UI --> EF[Supabase Edge Functions]
+  EF --> DB
+  EF --> Google[Google Calendar API]
+  EF --> Zoho[Zoho Calendar API]
+  EF --> Email[Managed email provider]
+  Cron[Supabase Cron / managed scheduler] --> EF
+  Google --> Hook[Supabase Edge Function webhook]
+  Zoho --> Hook
+  Hook --> DB
 ```
 
-### Core modules
+## 5. Application structure
 
-- Identity and access: accounts, sessions, invitations, organization memberships, roles, approval workflow.
-- Organizations: tenant profile, plan, policy, membership.
-- Calendar connections: OAuth lifecycle, encrypted credentials, provider accounts, calendar discovery.
-- Calendar sync: provider notifications, polling/reconciliation, normalized busy intervals, sync health.
-- Availability: working hours, date overrides, buffers, selected calendars, candidate slot generation, conflict checks.
-- Booking links: public configuration, publishing, slug uniqueness, host and calendar selection.
-- Booking engine: slot holds/locks, confirmation, destination event creation, rescheduling, cancellation.
-- Notifications: email templates, reminders, delivery status.
-- Developer platform: API keys, scopes, webhooks, delivery attempts, usage limits.
-- Platform administration: access requests, organizations, users, plan assignment, audit and health views.
-
-## 4. Responsibility boundaries
-
-### Frontend
-
-- Render pages and components from API data.
-- Collect form input and perform lightweight field-format feedback only.
-- Maintain transient UI state: open dialogs, selected tab, visible calendar filters, date-picker selection.
-- Call the shared API client and display loading, empty, success, and error states.
-- Never calculate authoritative availability, decide permissions, merge busy intervals, confirm a booking, or write provider events.
-
-### Backend layers
-
-Every resource follows this flow:
-
-1. **Route:** maps HTTP method/path to a controller and middleware only.
-2. **Controller:** parses validated request context, calls a service, returns the standard response. No business calculations.
-3. **Service:** owns business rules, authorization decisions, availability calculations, transaction boundaries, and provider orchestration.
-4. **Repository:** database queries only; no business rules.
-5. **Schema:** request and response validation.
-
-Provider adapters translate common calendar operations to provider-specific APIs. They do not own booking policy.
-
-## 5. Repository structure
+Use a single frontend application with Supabase configuration, SQL migrations, and Edge Functions alongside it. Adjust paths to the actual repository rather than moving existing code unnecessarily.
 
 ```text
 unified-scheduler/
 ├── CLAUDE.md
 ├── README.md
 ├── .env.example
-├── .gitignore
 ├── docs/
 │   ├── prd.md
 │   ├── architecture.md
 │   ├── rules.md
 │   ├── design.md
 │   ├── task.md
-│   └── memory.md
-├── frontend/
-│   └── src/
-│       ├── app/
-│       │   ├── (auth)/
-│       │   ├── (workspace)/
-│       │   ├── platform-admin/
-│       │   └── book/[slug]/
-│       ├── components/ui/
-│       ├── components/features/
-│       ├── hooks/
-│       ├── lib/api/
-│       ├── store/
-│       └── styles/
-│           ├── tokens.css
-│           └── global.css
-├── backend/
-│   └── src/
-│       ├── routes/
-│       │   ├── auth/
-│       │   ├── organizations/
-│       │   ├── memberships/
-│       │   ├── calendar-connections/
-│       │   ├── calendars/
-│       │   ├── availability/
-│       │   ├── booking-links/
-│       │   ├── bookings/
-│       │   ├── notifications/
-│       │   ├── api-keys/
-│       │   ├── webhooks/
-│       │   └── platform-admin/
-│       ├── providers/calendars/
-│       │   ├── calendar-provider.interface.ts
-│       │   ├── google/
-│       │   └── zoho/
-│       ├── middleware/
-│       ├── models/
-│       ├── config/
-│       ├── lib/
-│       ├── jobs/
-│       └── migrations/
-├── packages/
-│   ├── shared-types/
-│   └── validation/
-└── .github/
-    ├── workflows/ci.yml
-    ├── pull_request_template.md
-    └── CODEOWNERS
+│   ├── memory.md
+│   └── implementation.md
+├── src/
+│   ├── app/
+│   │   ├── (auth)/
+│   │   ├── (workspace)/
+│   │   ├── platform-admin/
+│   │   └── book/[slug]/
+│   ├── components/
+│   │   ├── ui/
+│   │   └── features/
+│   ├── hooks/
+│   ├── lib/
+│   │   ├── supabase/       # browser and server-safe Supabase clients
+│   │   ├── auth/
+│   │   ├── calendar/
+│   │   ├── validation/
+│   │   └── utils/
+│   ├── types/
+│   └── styles/
+├── supabase/
+│   ├── config.toml
+│   ├── migrations/
+│   ├── functions/
+│   │   ├── google-oauth-start/
+│   │   ├── google-oauth-callback/
+│   │   ├── zoho-oauth-start/
+│   │   ├── zoho-oauth-callback/
+│   │   ├── calendar-list/
+│   │   ├── calendar-busy/
+│   │   ├── booking-slots/
+│   │   ├── booking-confirm/
+│   │   ├── booking-reschedule/
+│   │   ├── booking-cancel/
+│   │   ├── provider-webhook-google/
+│   │   ├── provider-webhook-zoho/
+│   │   └── send-notification/
+│   └── seed.sql
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+└── .github/workflows/
 ```
 
-A monorepo is the proposed structure. It can be simplified during implementation, but module boundaries and the six docs must remain.
+Only create functions when a use case requires trusted execution. Function names above are a planning inventory, not a requirement to create empty functions up front. Prefer a small number of well-scoped functions over a large function per button.
 
-## 6. Core data model
+## 6. Data model and tenancy
 
-All IDs should be opaque UUIDs (or another approved non-sequential identifier). All tenant-owned records carry `organization_id` directly or through a rigorously enforced parent relation.
+Use Supabase Auth `auth.users` as the identity source. Keep application profile and tenant data in public-schema tables with RLS enabled.
 
-### Identity and tenancy
+Core tables (final columns and constraints must be captured in migrations):
 
-- `users`: `id`, `email`, `email_verified_at`, `name`, `avatar_url`, `status`, timestamps.
-- `organizations`: `id`, `name`, `slug`, `status`, `timezone`, `plan_id`, timestamps.
-- `organization_memberships`: `id`, `organization_id`, `user_id`, `role`, `status`, `invited_by`, timestamps. Unique `(organization_id, user_id)`.
-- `access_requests`: `id`, `user_id`, `requested_org_id` nullable, `requested_org_name` nullable, `request_type`, `status`, `reviewed_by`, `reviewed_at`, `review_reason`, timestamps.
-- `invitations`: `id`, `organization_id`, `email`, `role`, `token_hash`, `expires_at`, `accepted_at`, `invited_by`.
-- `sessions`: `id`, `user_id`, `session_hash`, `expires_at`, metadata.
+- `profiles`: user profile fields keyed to `auth.users.id`.
+- `organizations`: tenant/workspace details, slug, timezone, status, plan.
+- `organization_memberships`: organization/user/role/status; unique `(organization_id, user_id)`.
+- `access_requests`: requests to create or join an organization, approval status and reviewer metadata.
+- `invitations`: organization, email, role, hashed invitation token, expiry and acceptance state.
+- `calendar_connections`: organization, owner user, provider, provider account metadata, status and token reference/secure credential fields.
+- `calendars`: connected provider calendars, read/write capability, timezone and sync status.
+- `booking_links`: owner, host, slug, duration, buffers, notice, horizon, status and public configuration.
+- `booking_link_calendars`: booking link, calendar, selection type (`conflict_check` or `destination`). Enforce exactly one destination for a published link using a safe database design/transactional validation.
+- `working_hours` and `availability_overrides`: host schedules and exceptions.
+- `busy_intervals`: minimum necessary busy data; avoid copying private event titles/descriptions by default.
+- `bookings`: invitee details, slot, timezone, status, destination calendar, provider event reference and idempotency key.
+- `booking_audit_events`: status changes and actor/action metadata.
+- `api_keys`, `webhook_endpoints`, `webhook_deliveries`: later-phase developer platform records; store only hashed API-key secrets.
 
-### Calendar connections
+### RLS and tenant isolation
 
-- `calendar_connections`: `id`, `organization_id`, `user_id`, `provider` (`google` | `zoho`), `provider_account_id`, `account_email`, `status`, encrypted access/refresh token references, token expiry, granted scopes, last_sync_at, last_error_code, timestamps.
-- `calendars`: `id`, `organization_id`, `connection_id`, `provider_calendar_id`, `name`, `timezone`, `is_primary`, `is_readable`, `is_writable`, `sync_status`, timestamps. Unique `(connection_id, provider_calendar_id)`.
-- `calendar_selections`: `id`, `booking_link_id`, `calendar_id`, `selection_type` (`conflict_check` | `destination`). Enforce exactly one destination per published link.
-- `busy_intervals`: `id`, `organization_id`, `calendar_id`, `provider_event_id`, `start_at_utc`, `end_at_utc`, `status`, `source_updated_at`, `synced_at`. Store only minimum data required for availability where possible; do not persist full private event details by default.
-- `calendar_sync_cursors`: provider-specific cursor/delta token and reconciliation state.
+- Enable RLS on every table exposed through the Supabase Data API.
+- Policies must derive access from `auth.uid()` and verified membership rows, never from a client-supplied organization ID alone.
+- Use helper SQL functions only when they are `SECURITY INVOKER` by default and their permissions are carefully tested. Any `SECURITY DEFINER` function requires explicit review, fixed `search_path`, least privilege, and tests.
+- Public booking pages must expose only the published booking-link configuration and computed available slots. Do not expose organization membership, calendar IDs, provider tokens, or private event details.
+- Supabase service-role credentials bypass RLS. Use them only inside trusted Edge Functions and only for the minimum operation; never send them to the browser.
+- Platform-owner access must not imply permission to inspect private calendar event content.
 
-### Scheduling
+## 7. Calendar provider integration
 
-- `host_profiles`: `id`, `organization_id`, `user_id`, `display_name`, `timezone`, `slug`, `default_location`, timestamps.
-- `working_hours`: `id`, `organization_id`, `host_profile_id`, `weekday`, `start_local_time`, `end_local_time`, `timezone`, `is_enabled`.
-- `availability_overrides`: `id`, `organization_id`, `host_profile_id`, `start_at_utc`, `end_at_utc`, `type` (`available` | `unavailable`), `label`.
-- `booking_links`: `id`, `organization_id`, `owner_user_id`, `host_profile_id`, `slug`, `title`, `description`, `duration_minutes`, `buffer_before_minutes`, `buffer_after_minutes`, `minimum_notice_minutes`, `booking_horizon_days`, `status`, `location_type`, `location_value`, `settings_json`, timestamps. Unique public slug within the intended global or tenant namespace; final namespace decision must be documented.
-- `booking_questions`: `id`, `booking_link_id`, `label`, `field_type`, `is_required`, `sort_order`, `options_json`.
-- `availability_locks`: `id`, `organization_id`, `host_profile_id`, `start_at_utc`, `end_at_utc`, `idempotency_key`, `expires_at`, `status`. Backed by a transaction/locking strategy; not a substitute for provider recheck.
-- `bookings`: `id`, `organization_id`, `booking_link_id`, `host_user_id`, `invitee_name`, `invitee_email`, `invitee_timezone`, `start_at_utc`, `end_at_utc`, `status`, `destination_calendar_id`, `provider_event_id`, `manage_token_hash`, `idempotency_key`, `confirmed_at`, timestamps.
-- `booking_answers`: `id`, `booking_id`, `question_id`, `answer_value` with sensitive-data minimization and retention controls.
+Implement a small provider adapter module within Edge Functions (or shared Deno-compatible code) so Google and Zoho differences do not leak into booking rules.
 
-### Platform and developer
+Normalized operations:
 
-- `api_keys`: `id`, `organization_id`, `name`, `key_prefix`, `secret_hash`, `scopes`, `last_used_at`, `expires_at`, `revoked_at`, `created_by`.
-- `webhook_endpoints`: `id`, `organization_id`, `url`, `secret_hash`, `subscribed_events`, `status`, timestamps.
-- `webhook_deliveries`: `id`, `endpoint_id`, `event_id`, `attempt_count`, `next_attempt_at`, `response_code`, `status`, timestamps.
-- `audit_logs`: `id`, `organization_id` nullable for platform actions, `actor_user_id`, `action`, `resource_type`, `resource_id`, `metadata_redacted`, `created_at`.
-- `plans`: `id`, `name`, `limits_json`, `features_json`, `status`.
+- Start OAuth and validate callback state.
+- Exchange authorization code and refresh credentials.
+- List provider accounts/calendars and inspect read/write permissions.
+- Read free/busy or the minimum event data needed for conflict checks.
+- Create, update, and delete an event in the chosen destination calendar.
+- Handle provider webhook notifications where supported.
+- Reconcile changes with a scheduled sync when webhook delivery is unavailable or insufficient.
 
-## 7. Availability engine contract
+Provider credentials must never be returned to the frontend. OAuth state must be unpredictable, short-lived, single-use, and bound to the initiating user/workspace. Verify Google and Zoho scopes, callback requirements, Zoho data-center/region behavior, API quotas, event-write behavior, and notification support before implementation.
 
-### Inputs
+## 8. Availability and booking invariants
 
-- Host profile and timezone.
-- Booking link duration and buffer settings.
-- Host working hours and date overrides.
-- Booking horizon and minimum notice.
-- Selected conflict-check calendars and their sync freshness.
-- Existing confirmed bookings and active short-lived locks.
-- Requested date range and invitee timezone.
+1. A booking link has one or more calendars selected for conflict checking and exactly one destination calendar.
+2. A candidate slot is blocked if **any** selected conflict-check calendar is busy during the slot plus configured buffers.
+3. Availability is calculated in the trusted Edge Function/database layer, not solely in browser JavaScript.
+4. The browser may display returned slots, but cannot authoritatively declare a slot available.
+5. Booking confirmation must recheck conflicts immediately before committing.
+6. Use a database transaction, row/advisory lock or equivalent concurrency-safe mechanism, plus idempotency and uniqueness constraints where appropriate, to prevent two simultaneous confirmations from claiming the same host/slot.
+7. Create the external provider event only in the selected destination calendar. Never copy events to every connected calendar.
+8. Do not show `confirmed` until the destination provider write has succeeded and the booking record is safely committed. If a provider timeout leaves the write outcome unknown, reconcile before retrying to avoid duplicate events.
+9. Store UTC timestamps and the relevant IANA timezone; handle daylight-saving transitions and provider timezone differences.
+10. Reschedule and cancellation must update the booking state and the same destination provider event consistently, with idempotent retries.
 
-### Processing
+## 9. Edge Function boundaries
 
-1. Validate the public booking link is published and the host is active.
-2. Load the host's selected conflict-check calendars and verify each is usable.
-3. Fetch fresh busy intervals from local normalized data; refresh provider data when freshness policy requires it.
-4. Normalize all intervals to UTC and merge overlapping or adjacent busy intervals.
-5. Add existing platform bookings and active locks.
-6. Generate candidate slots from host working hours and date overrides.
-7. Apply duration, before/after buffers, minimum notice, booking horizon, and timezone conversion.
-8. Remove every candidate overlapping any merged busy interval.
-9. Return slots with timezone-aware ISO timestamps and display labels.
+Edge Functions are trusted serverless operations, not a general-purpose custom backend. Each function must:
 
-### Confirmation
+- Validate method, payload, caller identity, organization membership, and role.
+- Enforce the smallest possible authorization scope.
+- Validate provider callback state and prevent replay.
+- Use secrets only from Supabase-managed function secrets.
+- Apply timeouts, bounded retries, idempotency, and safe error mapping.
+- Avoid returning provider payloads or sensitive internal errors.
+- Log correlation IDs and safe metadata only; never log tokens, invitee secrets, or private event content.
 
-1. Validate invitee input and idempotency key.
-2. Acquire an atomic lock for host and requested interval.
-3. Re-fetch/recheck relevant provider calendars and platform bookings.
-4. If a conflict exists, release lock and return `409 SLOT_NO_LONGER_AVAILABLE` with refreshed alternatives.
-5. Create a pending booking record.
-6. Create event in the one configured destination calendar.
-7. On successful provider write, mark booking confirmed and persist provider event ID.
-8. On failure, retry safely where appropriate; otherwise mark booking `calendar_write_failed` or `pending_retry`, notify the user clearly, and release/retain the slot according to the explicit recovery policy. Never silently show confirmed when no event exists.
-9. Release lock and emit booking event/webhook.
+Do not build a generic CRUD proxy that duplicates Supabase. Use direct Supabase client access under RLS for normal tenant CRUD; reserve Edge Functions for trusted operations and integrations.
 
-### Provider freshness
+## 10. Public booking and access
 
-Provider push notifications are hints, not the sole source of truth. Maintain scheduled reconciliation and recheck at confirmation. Define provider-specific freshness windows after API quota and latency tests.
+- Public invitees do not need an account to book.
+- Public pages use an unguessable or rate-limited public slug/token strategy and reveal only minimal booking information.
+- Reschedule/cancel links use high-entropy, hashed management tokens with expiry/revocation; do not rely on booking IDs as authorization.
+- Rate-limit public slot and booking endpoints using an appropriate managed mechanism.
+- Workspace registration and join requests remain approval-based as defined in `prd.md`.
 
-## 8. Calendar provider interface
+## 11. Environment and deployment
 
-```ts
-interface CalendarProvider {
-  getAuthorizationUrl(input: OAuthStartInput): Promise<OAuthStartResult>;
-  exchangeAuthorizationCode(input: OAuthCallbackInput): Promise<CredentialSet>;
-  refreshCredentials(input: CredentialSet): Promise<CredentialSet>;
-  listAccounts(input: CredentialSet): Promise<ProviderAccount[]>;
-  listCalendars(input: CredentialSet): Promise<ProviderCalendar[]>;
-  listBusyIntervals(input: BusyQuery): Promise<BusyInterval[]>;
-  createEvent(input: CreateEventInput): Promise<CreatedProviderEvent>;
-  updateEvent(input: UpdateEventInput): Promise<UpdatedProviderEvent>;
-  deleteEvent(input: DeleteEventInput): Promise<void>;
-  revokeCredentials(input: CredentialSet): Promise<void>;
-}
-```
+Required environment categories (actual names to be finalized in `.env.example`):
 
-This is a conceptual contract. Implement only operations supported by the provider API and document provider-specific limitations. Do not assume Google and Zoho offer identical webhook, free/busy, or event semantics.
+- Browser-safe Supabase project URL and anon/publishable key.
+- Server-only Supabase service-role key for Edge Functions only (managed secret, not committed).
+- Google OAuth client ID/secret and redirect configuration.
+- Zoho OAuth client ID/secret and region-specific configuration.
+- Transactional email provider key.
+- Frontend canonical URL and allowed redirect origins.
 
-## 9. API route map
+Use separate Supabase projects/environments for local development, staging, and production where practical. Commit SQL migrations and deploy Edge Functions through repeatable CI/release steps. Never commit real credentials.
 
-All routes use `/api/v1`. Authenticated workspace routes derive tenant context from the session. API-key routes derive tenant context from the validated key. Public booking routes are rate-limited and scoped by an opaque public slug/token.
+## 12. Testing and release gates
 
-| Method and route | Auth | Purpose |
-|---|---|---|
-| `POST /auth/register` | Public | Register user and create pending access request |
-| `POST /auth/login` | Public | Sign in |
-| `POST /auth/logout` | Session | End session |
-| `GET /me` | Session | Current user and memberships |
-| `GET /organizations` | Session | List memberships/workspaces |
-| `POST /organizations` | Session | Request/create organization subject to approval |
-| `GET /organizations/:orgId/members` | Org role | List members, paginated |
-| `POST /organizations/:orgId/invitations` | Owner/Admin | Invite member |
-| `GET /calendar-connections` | Session + org | List own connected accounts |
-| `POST /calendar-connections/:provider/oauth` | Session + org | Start provider OAuth |
-| `GET /calendar-connections/:provider/callback` | OAuth state | Complete OAuth callback |
-| `DELETE /calendar-connections/:id` | Connection owner/Admin policy | Disconnect provider account |
-| `GET /calendars` | Session + org | List available calendars |
-| `PATCH /calendars/:id/selection` | Calendar owner | Configure conflict-check inclusion |
-| `GET /availability` | Public or session | Return server-computed slots for a link/host |
-| `GET /booking-links` | Session + org | List booking links, paginated |
-| `POST /booking-links` | Authorized host/Admin | Create draft link |
-| `GET /booking-links/:id` | Authorized member | Read link configuration |
-| `PATCH /booking-links/:id` | Owner/authorized host | Update link |
-| `POST /booking-links/:id/publish` | Owner/authorized host | Publish link |
-| `POST /booking-links/:id/pause` | Owner/authorized host | Pause link |
-| `GET /public/booking-links/:slug` | Public | Public-safe link details |
-| `GET /public/booking-links/:slug/availability` | Public | Public slots |
-| `POST /public/booking-links/:slug/bookings` | Public | Create booking with idempotency key |
-| `GET /bookings` | Session + org | List bookings, paginated and filtered |
-| `GET /bookings/:id` | Authorized member | Booking detail |
-| `POST /bookings/:id/reschedule` | Manage token or authorized member | Reschedule booking |
-| `POST /bookings/:id/cancel` | Manage token or authorized member | Cancel booking |
-| `GET /platform/access-requests` | Super Admin | List pending requests |
-| `POST /platform/access-requests/:id/approve` | Super Admin | Approve request |
-| `POST /platform/access-requests/:id/reject` | Super Admin | Reject request |
-| `GET /platform/organizations` | Super Admin | List organizations |
-| `GET /platform/users` | Super Admin | List users |
-| `GET /platform/audit-logs` | Super Admin | Platform audit log |
-| `POST /developer/api-keys` | Org Owner/Admin | Create scoped key |
-| `DELETE /developer/api-keys/:id` | Org Owner/Admin | Revoke key |
-| `POST /developer/webhooks` | Org Owner/Admin | Create webhook endpoint |
-| `GET /developer/webhook-deliveries` | Org Owner/Admin | List delivery attempts |
-
-All request and response schemas must be documented in code and OpenAPI. Do not ship undocumented routes.
-
-### Standard response
-
-Success:
-
-```json
-{
-  "data": {},
-  "meta": { "requestId": "opaque-request-id" }
-}
-```
-
-Error:
-
-```json
-{
-  "error": {
-    "code": "SLOT_NO_LONGER_AVAILABLE",
-    "message": "That time is no longer available. Please choose another slot.",
-    "details": {}
-  },
-  "meta": { "requestId": "opaque-request-id" }
-}
-```
-
-Do not expose stack traces, provider tokens, private event details, or internal database errors.
-
-## 10. Authentication and authorization flow
-
-- Verify email before activating normal workspace access.
-- New accounts remain pending until approved under the selected onboarding policy.
-- Use secure, HTTP-only, SameSite cookies for browser sessions; rotate session identifiers after authentication and privilege changes.
-- OAuth state and PKCE (where supported) protect provider authorization callbacks.
-- Encrypt provider refresh/access tokens using a managed encryption key; never store raw tokens in client-accessible tables or logs.
-- Every API request resolves the authenticated user, active organization membership, and role server-side.
-- Platform Super Admin is a separate platform-level role, not an organization role.
-- Support actions that touch customer data must be permissioned, reasoned, time-limited where practical, and audit logged.
-- Public booking management uses random high-entropy tokens; persist only token hashes.
-
-## 11. State management
-
-- **Server state:** bookings, availability, calendar connections, members, booking links, analytics. Fetch through the shared API client and a query/cache layer (React Query/TanStack Query proposed).
-- **UI state:** selected calendar filters, open panels, current view, temporary builder step, unsaved local form state. Keep local to the relevant feature where possible.
-- Never treat cached availability as authoritative at confirmation.
-
-## 12. Error flow
-
-Database/provider → repository/provider adapter → domain service (typed error) → central error handler → standard API response → shared frontend API client → contextual UI message and recovery action.
-
-Provider-specific error codes should be mapped to stable internal codes. Retain correlation IDs across background jobs and webhook deliveries.
-
-## 13. Performance and load plan
-
-- Paginate bookings, members, audit logs, API keys, and organization lists.
-- Index `(organization_id, start_at_utc, end_at_utc)` for bookings and busy intervals, plus lookup indexes for slugs, connection IDs, and provider event IDs.
-- Avoid one provider API call per calendar row; batch where provider APIs support it.
-- Cache public link configuration briefly; never cache a final booking decision as authoritative.
-- Use bounded date windows for availability queries.
-- Set and measure API-call budgets per screen before release.
-- Use background jobs for sync, reminders, webhook delivery, and reconciliation.
-
-## 14. Rendering and SEO
-
-- Public booking link details: server-rendered where feasible for fast first paint and social metadata; no invitee-specific information in metadata.
-- Public availability: fetched from API after link page loads or server-side with short cache rules; do not index time-slot responses.
-- Authenticated workspace and Owner Console: authenticated app rendering; noindex.
-- Booking confirmation, reschedule, cancellation and tokenized management pages: noindex and no sensitive data in shared metadata.
-
-## 15. Environments and configuration
-
-- `development`: local provider OAuth test apps and synthetic calendar data.
-- `staging`: isolated database, provider apps/test accounts, noindex, test email sink.
-- `production`: approved OAuth apps, production secrets, backups, monitoring, verified domain.
-
-All configuration is typed and read from environment/secret manager. `.env.example` lists names and descriptions only. No real credentials in Git.
-
-## 16. Operational safeguards
-
-- Daily database backups and tested restore procedure.
-- Calendar sync dead-letter queue and retry visibility.
-- Alert on provider token refresh failures, sustained sync lag, booking write failures, queue backlog, and API error spikes.
-- Audit all role, approval, API-key, connection, and booking state changes.
-- Define data retention, account deletion, organization deletion, and provider token revocation workflows before production.
+- Unit-test availability math, timezone conversion, buffers, and booking state transitions.
+- Test RLS policies using at least two organizations and users with different roles.
+- Test Edge Functions with mocked provider responses, including OAuth denial, expired credentials, rate limits, timeouts, duplicate webhooks, and ambiguous event-write outcomes.
+- Run concurrent booking tests to prove that only one request can confirm a conflicting slot.
+- Test public routes for data leakage and token guessing/rate-limit behavior.
+- Run end-to-end tests for onboarding, approval, connection, booking, reschedule, cancellation, and admin workflows.
+- Do not launch production OAuth or public booking until security, provider capability, and concurrency gates pass.

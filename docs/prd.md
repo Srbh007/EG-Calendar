@@ -61,9 +61,9 @@ Targets and measurement windows must be set before public launch; do not invent 
 
 ## 4. Product principles
 
-- **One availability engine:** every booking link uses the same server-side conflict logic.
+- **One availability engine:** every booking link uses the same trusted Supabase Edge Function/database conflict logic.
 - **Check many, write one:** check all calendars selected by the host; create the event only in the explicitly selected destination calendar.
-- **Backend is authoritative:** the browser never decides whether a slot is truly available or whether a user has permission.
+- **Managed services are authoritative:** the browser never decides whether a slot is truly available or whether a user has permission; Supabase RLS, database constraints and trusted Edge Functions enforce these rules.
 - **Tenant isolation by default:** every organization-owned record is scoped to an organization; cross-tenant access is denied.
 - **Privacy by default:** availability checks should need only busy intervals where provider permissions allow; event details are shown only to authorized viewers.
 - **Honest booking states:** do not display a booking as confirmed until the destination calendar write succeeds or a clearly defined confirmed workflow is completed.
@@ -80,7 +80,7 @@ Targets and measurement windows must be set before public launch; do not invent 
 - Organization switching for users who belong to multiple organizations.
 - Roles: Platform Super Admin, Organization Owner, Organization Admin, Manager, Employee, and read-only/support roles where needed.
 - Invitation flow for employees.
-- Server-side authorization on every organization-scoped operation.
+- RLS/database authorization on organization-scoped data and trusted Edge Function authorization for privileged operations.
 
 #### Calendar integrations
 - Connect multiple Google accounts and multiple Zoho accounts per user, subject to provider OAuth/API capabilities and approval.
@@ -165,7 +165,7 @@ Targets and measurement windows must be set before public launch; do not invent 
 **As a host, I can prevent bookings when any selected calendar is busy.**
 - [ ] A busy interval in any selected calendar blocks overlapping candidate slots.
 - [ ] Busy intervals are merged before slot generation.
-- [ ] Buffers, working hours, date overrides, minimum notice, and booking horizon are applied server-side.
+- [ ] Buffers, working hours, date overrides, minimum notice, and booking horizon are applied in trusted Supabase Edge Function/database logic.
 - [ ] Availability is rechecked at confirmation.
 - [ ] Concurrent booking attempts cannot both reserve the same host and time.
 
@@ -225,7 +225,7 @@ Targets and measurement windows must be set before public launch; do not invent 
 - Zoho Calendar API capabilities, OAuth scopes, regional data-center endpoints, and webhook support must be verified against the selected Zoho account region.
 - Provider availability and write operations can fail independently; the product must model these states explicitly.
 - Calendar event timezones and daylight-saving transitions must be handled consistently.
-- A secure backend is required even though the product is a browser-first portal. OAuth secrets, availability decisions, tenant authorization, booking locks, and provider writes must never be implemented only in the frontend.
+- A secure trusted execution layer is required even though the product is browser-first. Use Supabase Auth, PostgreSQL RLS, database transactions/constraints and Supabase Edge Functions; do not build a separate custom backend application. OAuth secrets, authoritative availability, tenant authorization, booking atomicity and provider writes must never be implemented only in the frontend.
 
 ## 10. Open decisions before production
 
@@ -242,3 +242,8 @@ Targets and measurement windows must be set before public launch; do not invent 
 ## 11. SEO and public pages
 
 Public booking pages should have controlled metadata, canonical URLs, and no indexing of private booking data. Booking confirmation, reschedule, cancellation, and invitee-specific pages must be noindex. Organization marketing pages may be indexable later; authenticated workspace and admin pages must always be noindex.
+
+
+## Performance implementation reference
+
+The implementation must follow [`performance.md`](performance.md), including image optimization, lazy loading, code splitting, safe API/server caching, CDN delivery, minification, database indexes, React render optimization, debounced search, pagination, dependency cleanup, deferred non-critical scripts, loading skeletons, payload reduction, Supabase-managed connection pooling, N+1 query remediation and Lighthouse audits. A separately operated load balancer is not required by default in the managed-services architecture.

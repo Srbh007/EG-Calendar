@@ -1,21 +1,53 @@
-# Unified Scheduler — Claude Code Instructions
+# Claude Code Project Instructions — Unified Scheduler
 
-This repository implements a multi-tenant SaaS scheduling platform. Proposed stack: Next.js, React, TypeScript, Node.js API, PostgreSQL, background jobs, and Google/Zoho calendar provider adapters. Confirm the actual stack from the repository before changing it.
+This repository implements a multi-tenant scheduling SaaS using a **Next.js frontend + Supabase managed services** architecture.
 
-Before any change:
-1. Read `docs/rules.md`, `docs/architecture.md`, and `docs/design.md`.
-2. Read the relevant sections of `docs/prd.md` and `docs/memory.md`.
-3. Work only from an approved plan in `docs/task.md` with a real Notify card ID.
-4. Keep changes minimal and update docs in the same task branch when decisions, routes, models, design tokens, or lessons change.
+## Mandatory first steps
 
-Non-negotiable rules:
-- Business logic, availability, booking decisions, permissions, tenant isolation, and provider writes live in backend services.
-- Frontend displays data and collects input; it is never authoritative for availability or access control.
-- A booking link checks all selected conflict calendars and writes to exactly one selected destination calendar.
-- Any selected busy calendar blocks an overlapping slot. Recheck availability at confirmation and prevent concurrent double-booking.
-- Never expose OAuth tokens, secrets, private event details, or cross-tenant data.
-- Use design tokens; no arbitrary colors or spacing.
-- Add tests for happy paths, edge cases, provider failures, and tenant isolation.
-- Do not invent Notify IDs, credentials, provider capabilities, or environment values.
+1. Read `README.md`.
+2. Read `docs/prd.md`, `docs/architecture.md`, and `docs/rules.md` for product/architecture work.
+3. Read `docs/design.md` for UI work.
+4. Read root `implementation.md` and the matching card in `docs/task.md` before starting a task.
+5. Read `docs/performance.md` for performance, caching, query, asset or release work.
+5. Check `docs/memory.md` for prior decisions and known provider limitations.
 
-If a task plan is incomplete or conflicts with these docs, stop and request clarification/update the plan before coding.
+## Architecture guardrails
+
+- Do not create a separate custom backend application or standalone API server.
+- Do not add Express, NestJS, Fastify, self-managed PostgreSQL, Redis, or self-hosted workers.
+- Use Next.js/React/TypeScript for the frontend.
+- Use Supabase Auth, PostgreSQL, RLS and Edge Functions for managed infrastructure and trusted serverless operations.
+- Use direct Supabase client access under RLS for ordinary CRUD.
+- Use Edge Functions only for secret-bearing or trusted operations such as OAuth exchange/refresh, provider API calls, webhooks, notifications and booking confirmation.
+- Never expose service-role keys, OAuth secrets, refresh tokens or webhook secrets to the browser.
+- Never bypass RLS to make a UI feature easier.
+
+## Product invariants
+
+- Every booking link has separate conflict-check calendars and exactly one destination calendar.
+- Any busy conflict in any selected conflict-check calendar blocks the slot.
+- Create the booking event only in the selected destination calendar.
+- Recheck availability at confirmation and prevent concurrent double booking with database-level atomicity.
+- Do not show a booking as confirmed before the destination event write succeeds and the booking record is committed.
+- Public invitees do not need accounts and must not receive private calendar or tenant data.
+- Platform owner access does not automatically expose private calendar event details.
+
+## Task discipline
+
+- Only implement an approved task with a real Notify ID, owner and acceptance criteria.
+- Never invent Notify IDs or claim a card exists if it has not been created.
+- Keep changes within the selected task; do not perform unrelated refactors.
+- Add/update migrations, RLS tests, Edge Function tests and UI tests relevant to the task.
+- Follow `docs/performance.md`; do not add shared caching for private calendar/tenant data.
+- Prefer managed CDN, Supabase connection pooling and hosting capabilities; do not add a self-managed load balancer or cache cluster without approval.
+- Update `docs/memory.md` when a durable decision or verified provider limitation is discovered.
+- If a document conflicts with another, stop and request clarification rather than guessing.
+
+## Completion checklist
+
+- Acceptance criteria and tests pass.
+- RLS/tenant isolation is verified for data changes.
+- No secret or private calendar data is exposed to browser or logs.
+- Scheduling invariants remain intact.
+- Docs and migrations are updated.
+- No unapproved custom backend service or infrastructure is introduced.

@@ -265,7 +265,7 @@ Each step autosaves only after server acknowledgement. Provider connection error
 
 ### 5.11 Team scheduling
 
-This is a later feature. Provide a dedicated builder for fixed host, round-robin pool, or collective availability. Do not expose the UI until the backend supports its conflict and assignment rules.
+This is a later feature. Provide a dedicated builder for fixed host, round-robin pool, or collective availability. Do not expose the UI until trusted Supabase Edge Function/database logic supports its conflict and assignment rules.
 
 ### 5.12 Developer API and webhooks
 

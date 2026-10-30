@@ -1,94 +1,63 @@
-# Project Memory
+# Project Memory — Unified Scheduler
 
-**Product:** Unified Scheduler  
-**Curator:** Tech lead / CTO  
-**Status:** Initial baseline  
-**Last updated:** 2026-10-31
+**Last updated:** 2026-10-31  
+**Purpose:** Durable decisions and implementation discoveries. Update when a decision or verified constraint changes.
 
-This file records decisions, known issues, reusable patterns, and the change log. Update it on the same day a decision is made or an incident teaches a lesson. Remove duplicates during the monthly review; do not erase useful history.
+## Product decisions
 
-## 1. Decisions
+- Product is a multi-tenant scheduling SaaS, not only a personal calendar.
+- Users may connect multiple Google Calendar and multiple Zoho Calendar accounts; future providers should fit an adapter pattern.
+- Unified availability checks every calendar selected for conflict detection. If any selected calendar is busy, the overlapping slot is blocked.
+- Each booking link has two distinct selections: one or more calendars to check and exactly one destination calendar to receive the booking event.
+- Do not copy or synchronize all provider events between calendars.
+- Multiple booking links are supported per user/organization.
+- Organization access is approval-based; invitations can add employees to an existing organization.
+- Public invitees can book without creating an account.
+- Platform Owner Console and Organization Workspace are separate experiences.
+- Platform owner access does not automatically grant access to private calendar event details.
+- Round-robin and collective scheduling are later-phase capabilities.
 
-### Product and tenancy
-- Product is a multi-tenant SaaS scheduling platform, not only a personal calendar dashboard.
-- Two distinct surfaces exist: Organization Workspace and Platform Owner Console.
-- New registrations/access requests require approval before workspace access.
-- Platform Super Admin is separate from organization roles.
-- Users can belong to organizations; organization data must remain isolated.
+## Architecture decision — 2026-10-31
 
-### Booking and calendar behavior
-- Users may connect multiple Google and multiple Zoho accounts, subject to provider API/OAuth support.
-- Each booking link has two separate calendar settings: one or more calendars to check for conflicts, and exactly one destination calendar to receive the new event.
-- A busy interval in any selected conflict-check calendar blocks overlapping availability.
-- The system does not copy every event between Google and Zoho. It calculates unified availability from connected providers.
-- The destination calendar is selected per booking link. New bookings are written only to that selected calendar.
-- Availability is computed by the backend and rechecked immediately before confirmation.
-- Booking links can be created by the platform/organization administrators and authorized employees. Employees can create and share their own links.
-- External invitees can book through public links without creating a platform account.
+- **Selected direction:** Frontend + managed services.
+- **Frontend:** Next.js, React and TypeScript.
+- **Managed platform:** Supabase Auth, PostgreSQL, Row Level Security and Edge Functions; Supabase Cron or an approved managed scheduler for scheduled work.
+- **No separately maintained custom backend application or standalone API server.** Do not add a separate Express/Nest/Fastify service, self-managed database, Redis cluster or self-hosted worker without an explicit architecture change.
+- Edge Functions are serverless trusted operations, not a traditional backend service. Use them only where secrets, provider API calls, webhooks, or atomic booking workflows require trusted execution.
+- Normal tenant CRUD should use the Supabase client under RLS, not a generic custom CRUD API.
+- Supabase service-role credentials and OAuth secrets must remain in managed secrets and trusted execution contexts; never expose them to the browser.
 
-### Design
-- Visual direction: minimal, professional, desktop-first, responsive.
-- Main palette: primary green `#147D52`, light green `#DDF3E7`, dark highlight `#17231D`, near-white background `#F7F9F7`.
-- Avoid clutter, excessive cards, gradients, heavy shadows, and decorative color use.
-- Calendar, booking-link builder, and public booking page are the three highest-priority experiences.
+## Scheduling invariants
 
-### Architecture
-- Browser-first product still requires a secure backend for OAuth, secrets, tenant authorization, availability, locks, and provider writes.
-- Proposed baseline is Next.js/React/TypeScript, Node.js/TypeScript API, PostgreSQL, a durable job queue, and provider adapters. Stack remains subject to CTO approval.
-- Frontend handles presentation and UI state only; backend services own business logic.
+- Availability is calculated in trusted Edge Function/database logic and rechecked before confirmation.
+- Use database transactions/locking/constraints and idempotency to prevent simultaneous conflicting bookings.
+- Write a new booking event only to the selected destination calendar.
+- Do not show confirmed until provider event creation succeeds and the booking state is committed.
+- Unknown provider write outcomes require reconciliation before retry to avoid duplicate events.
+- Store UTC instants and IANA timezone identifiers; test daylight-saving transitions.
+- Store only minimum busy information needed; do not persist private event details by default.
 
-## 2. Known issues and gotchas
+## Design decisions
 
-- **Provider parity is not assumed:** Google and Zoho may differ in API scopes, webhook support, sync cursors, rate limits, event semantics, and regional endpoints. Verify each capability before implementation.
-- **Availability cache is not authoritative:** a slot can become busy after the public page loads. Always recheck at confirmation.
-- **Concurrent booking race:** two users can select the same slot. Use a database-backed atomic lock/transaction and idempotency strategy.
-- **Provider write ambiguity:** a timeout may occur after a provider accepted an event. Retry must first reconcile or use provider-supported idempotency/deduplication to avoid duplicate events.
-- **Stale calendar data:** missing provider notifications can leave local busy intervals stale. Scheduled reconciliation and confirmation-time checks are required.
-- **Timezone complexity:** store instants in UTC, preserve IANA timezone for display/working hours, and test DST gaps/repeated times.
-- **Privacy:** availability needs busy intervals, not necessarily private event titles, descriptions, or attendees. Minimize retained provider event data.
-- **Super Admin boundary:** platform-level authority does not automatically authorize reading a user's private calendar contents.
-- **Booking confirmation state:** never show confirmed until the destination calendar write succeeds, unless a separately designed pending state is explicit to the invitee.
+- Minimalist green visual direction.
+- Palette baseline: primary `#147D52`, light green `#DDF3E7`, dark highlight `#17231D`, background `#F7F9F7`.
+- Use mostly white/near-white surfaces; avoid clutter, gradients, heavy shadows and excessive cards.
 
-No production incidents have been recorded yet; the items above are design risks, not claims of observed failures.
+## Open verification items
 
-## 3. Patterns to follow
+- Verify Google OAuth scopes, account restrictions, free/busy support, event write behavior, quotas and push notifications.
+- Verify Zoho OAuth scopes, data-center/region endpoints, calendar operations, quotas and notification behavior.
+- Confirm Supabase plan/region, Edge Function limits, Cron availability, backups and production environment strategy.
+- Select a managed transactional email provider.
+- Verify whether any provider operations require special review/verification before public launch.
 
-- Use one shared availability service for public pages, internal previews, and API consumers.
-- Use a shared calendar-provider interface with separate Google and Zoho adapters.
-- Keep `conflict_check` calendar selections separate from the single `destination` selection.
-- Derive tenant ID from authenticated membership or validated API key; never trust a client-provided tenant ID.
-- Use server state through the shared API client/query layer; keep UI state local.
-- Every list endpoint is paginated and every UI list has loading, empty, error, and permission states.
-- Use typed domain errors and one central API error handler.
-- Use idempotency keys for booking creation and retry-sensitive mutations.
-- Audit role changes, access approvals, API key lifecycle, calendar connections, and booking state transitions.
-- Use design tokens for every color, spacing value, radius, typography value, and shadow.
-- Public booking pages must not expose private event details or internal calendar identifiers.
+## Change log
 
-## 4. Change log
+- 2026-10-31: Replaced proposed custom Node.js API/PostgreSQL/queue architecture with Next.js + Supabase managed services. Updated implementation sequencing and Notify card breakdown accordingly.
 
-- **2026-10-31 — Initial project documentation created.** Captured multi-tenant SaaS scope, Google + Zoho multi-account calendar connections, unified conflict detection, per-link destination calendar, approval-based onboarding, employee-created booking links, green minimalist design system, and API-first roadmap.
 
-## 5. Decision log template
+## Performance architecture decision (2026-10-31)
 
-For future decisions, add newest first:
-
-```md
-### YYYY-MM-DD — Decision title
-- Context:
-- Decision:
-- Reason:
-- Consequences / follow-up:
-- Approved by:
-```
-
-## 6. Incident / lesson template
-
-```md
-### YYYY-MM-DD — Short incident title
-- What happened:
-- Root cause:
-- User/system impact:
-- Fix:
-- Prevention / regression test:
-```
+- Performance work is tracked in root `implementation.md` Phase 9 and `task.md` Phase 9, with detailed guidance in `performance.md`.
+- Prefer managed frontend CDN and Supabase connection pooling; no self-managed load balancer/cache cluster by default.
+- Never shared-cache private calendar, OAuth or tenant data. Availability is rechecked authoritatively during booking confirmation.
