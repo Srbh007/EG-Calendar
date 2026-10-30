@@ -22,9 +22,9 @@
 | 0 | 0.4 | Create Notify cards and confirm release gates | NTF-004 | Done |
 | 1 | 1.1 | Set up Next.js frontend application | NTF-005 | Done |
 | 1 | 1.2 | Implement design tokens and global styles | NTF-006 | Done |
-| 1 | 1.3 | Build shared UI primitives | NTF-007 | Not started |
-| 1 | 1.4 | Build organization workspace shell | NTF-008 | Not started |
-| 1 | 1.5 | Build platform owner console shell | NTF-009 | Not started |
+| 1 | 1.3 | Build shared UI primitives | NTF-007 | Done |
+| 1 | 1.4 | Build organization workspace shell | NTF-008 | Done |
+| 1 | 1.5 | Build platform owner console shell | NTF-009 | Done |
 | 2 | 2.1 | Configure Supabase clients and local development | NTF-TBD | Not started |
 | 2 | 2.2 | Create initial database migrations and profile model | NTF-TBD | Not started |
 | 2 | 2.3 | Configure Supabase Auth flows | NTF-TBD | Not started |
