@@ -46,7 +46,7 @@ Create one Notify card for each numbered task below. Each card must contain:
 6. **Acceptance criteria** — testable completion conditions.
 7. **Test evidence** — commands, screenshots, test cases, or provider sandbox proof.
 
-The `NTF-TBD` marker means the real Notify ID has not yet been assigned. Replace it with the actual ID after creating the card. Never fabricate IDs. Keep each task small enough to review independently; split any card that becomes larger than one focused engineering outcome.
+The `NTF-001` marker means the real Notify ID has not yet been assigned. Replace it with the actual ID after creating the card. Never fabricate IDs. Keep each task small enough to review independently; split any card that becomes larger than one focused engineering outcome.
 
 ## 4. Global implementation sequence
 
@@ -69,7 +69,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 0 — Decisions and project readiness
 
 #### Card 0.1 — Confirm Supabase project and environment strategy
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-002`
 - **Objective:** Decide Supabase project setup for local development, staging and production.
 - **Scope:** Project ownership, regions, environments, access roles, backups, plan/limits, redirect URLs and secret-management approach. No feature coding.
 - **Depends on:** None.
@@ -77,7 +77,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Environment strategy is documented; project region and plan are selected; no credentials are committed; required owners/access are known.
 
 #### Card 0.2 — Verify Google and Zoho API capabilities
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-003`
 - **Objective:** Verify OAuth scopes, calendar listing, free/busy/event reads, event create/update/delete, refresh/revocation, quotas, webhook support and Zoho regions.
 - **Scope:** Produce a capability matrix and sandbox test plan; do not implement provider integration yet.
 - **Depends on:** Card 0.1.
@@ -85,7 +85,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Every required provider capability is marked verified, unsupported or requiring fallback; callback URLs/scopes and regional endpoints are recorded.
 
 #### Card 0.3 — Inspect repository and confirm frontend stack
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-004`
 - **Objective:** Inspect the actual repository, package manager, existing UI, scripts, CI and conventions.
 - **Scope:** Reconcile the proposed Next.js structure with the existing repository; do not replace working code unnecessarily.
 - **Depends on:** Card 0.1.
@@ -93,17 +93,17 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** A short baseline report records current stack, commands, existing assets, gaps and agreed folder structure.
 
 #### Card 0.4 — Create Notify cards and confirm release gates
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-005`
 - **Objective:** Create real Notify cards from this plan and assign owners/priorities.
 - **Scope:** Add actual Notify IDs to `docs/task.md`; identify task owners and review owners.
 - **Depends on:** Cards 0.1–0.3.
 - **Read:** `implementation.md`, `docs/task.md`, `docs/rules.md`.
-- **Acceptance:** Every implementation card has a real Notify ID, owner, priority and dependency; no `NTF-TBD` remains for tasks entering active work.
+- **Acceptance:** Every implementation card has a real Notify ID, owner, priority and dependency; no `NTF-006` remains for tasks entering active work.
 
 ### Phase 1 — Frontend foundation and design system
 
 #### Card 1.1 — Set up Next.js frontend application
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-007`
 - **Objective:** Create or align the single Next.js + React + TypeScript application.
 - **Scope:** App bootstrapping, package scripts, lint, type-check, test setup and environment validation. No separate API server.
 - **Depends on:** 0.3.
@@ -111,7 +111,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** App runs locally; lint/type-check commands work; no standalone backend service or unnecessary framework is added.
 
 #### Card 1.2 — Implement design tokens and global styles
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-008`
 - **Objective:** Implement the minimalist green visual system.
 - **Scope:** Colors, typography, spacing, borders, radii, focus rings, responsive tokens and global styles.
 - **Depends on:** 1.1.
@@ -119,7 +119,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Tokens match design specification; components use tokens; keyboard focus and contrast are verified.
 
 #### Card 1.3 — Build shared UI primitives
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-009`
 - **Objective:** Create reusable accessible controls and common states.
 - **Scope:** Buttons, inputs, selects, dialogs, tabs, tables, badges, dropdowns, skeletons, empty/error/success states.
 - **Depends on:** 1.2.
@@ -127,7 +127,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Shared variants are documented; keyboard behavior works; no duplicate one-off controls for common patterns.
 
 #### Card 1.4 — Build organization workspace shell
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-010`
 - **Objective:** Build the main workspace navigation and responsive layout.
 - **Scope:** Sidebar, top bar, organization switcher, page header, responsive navigation and route placeholders.
 - **Depends on:** 1.2, 1.3.
@@ -135,7 +135,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Navigation matches route map; mobile layout works; active, collapsed and empty states are handled.
 
 #### Card 1.5 — Build platform owner console shell
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-011`
 - **Objective:** Build a separate Platform Owner Console experience.
 - **Scope:** Navigation and page shells for organizations, access requests, users, plans, usage, audit and system health.
 - **Depends on:** 1.2, 1.3.
@@ -145,7 +145,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 2 — Supabase setup, identity and tenant isolation
 
 #### Card 2.1 — Configure Supabase clients and local development
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-012`
 - **Objective:** Configure browser-safe and server-safe Supabase clients and local Supabase workflow.
 - **Scope:** Supabase CLI/config, generated types, `.env.example`, local start/reset commands and safe key handling.
 - **Depends on:** 0.1, 1.1.
@@ -153,7 +153,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Local environment starts; only publishable/anon key is exposed to browser; service-role key is absent from frontend build and committed files.
 
 #### Card 2.2 — Create initial database migrations and profile model
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-013`
 - **Objective:** Add profiles, organizations, memberships and foundational constraints.
 - **Scope:** SQL migrations, foreign keys, indexes, generated TypeScript database types and seed data for local development.
 - **Depends on:** 2.1.
@@ -161,7 +161,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Migrations apply cleanly from an empty local database; constraints and generated types are checked in.
 
 #### Card 2.3 — Configure Supabase Auth flows
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-014`
 - **Objective:** Implement registration, login, logout, email verification and password reset using Supabase Auth.
 - **Scope:** Frontend auth screens, redirect allowlists, session handling and protected route behavior.
 - **Depends on:** 2.1, 2.2.
@@ -169,7 +169,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Auth lifecycle works in local/staging; unverified or signed-out users cannot access protected workspace routes; secrets are not stored manually in browser storage.
 
 #### Card 2.4 — Implement RLS policies for profiles and organizations
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-015`
 - **Objective:** Enforce organization membership and role access at the database layer.
 - **Scope:** RLS policies and helper functions, with tests for owner/admin/member and cross-tenant access.
 - **Depends on:** 2.2, 2.3.
@@ -177,7 +177,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** RLS enabled on exposed tables; user A cannot read or mutate organization B data; policies are tested with multiple identities.
 
 #### Card 2.5 — Implement organization requests, approvals and invitations
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-016`
 - **Objective:** Build the approval-based onboarding workflow.
 - **Scope:** Access request tables, RLS, approval UI, invitation creation/acceptance and audit metadata.
 - **Depends on:** 2.4.
@@ -185,7 +185,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** New organization/join requests remain pending until approved; invite tokens are hashed, single-use and expiring; roles are assigned only through trusted flows.
 
 #### Card 2.6 — Build team and role management UI
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-017`
 - **Objective:** Allow authorized admins to manage team members and roles.
 - **Scope:** Team list, invite flow, role change, deactivate/remove member and permission states.
 - **Depends on:** 2.5.
@@ -195,7 +195,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 3 — Calendar connections and integrations UI
 
 #### Card 3.1 — Create calendar connection schema and RLS
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-018`
 - **Objective:** Add calendar connections, calendars and booking-link calendar-selection tables.
 - **Scope:** Migrations, indexes, constraints and tenant policies; do not store tokens in client-readable rows.
 - **Depends on:** 2.4, 0.2.
@@ -203,7 +203,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Multiple provider accounts/calendars per user are represented; connection metadata is tenant-scoped; sensitive credential access is restricted.
 
 #### Card 3.2 — Build integrations and account management screens
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-019`
 - **Objective:** Build UI for connecting accounts and managing calendar permissions.
 - **Scope:** Provider cards, connect buttons, account list, calendar list, status, reconnect and disconnect states.
 - **Depends on:** 1.3, 3.1.
@@ -211,7 +211,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Loading, empty, connected, read-only, error and reconnect states are designed and responsive; no credentials appear in UI.
 
 #### Card 3.3 — Implement secure Google OAuth Edge Functions
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-020`
 - **Objective:** Implement Google OAuth start/callback and secure token lifecycle in Supabase Edge Functions.
 - **Scope:** OAuth state, callback validation, code exchange, secure credential storage, refresh and disconnect/revoke handling.
 - **Depends on:** 0.2, 2.1, 3.1.
@@ -219,7 +219,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** OAuth success/denial/replay/expiry cases pass; tokens never reach browser; multiple accounts supported where provider rules allow.
 
 #### Card 3.4 — Implement secure Zoho OAuth Edge Functions
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-021`
 - **Objective:** Implement Zoho OAuth start/callback and secure token lifecycle.
 - **Scope:** Region-aware endpoints, callback validation, code exchange, secure storage, refresh and disconnect/revoke.
 - **Depends on:** 0.2, 2.1, 3.1.
@@ -227,7 +227,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Correct Zoho data center is used; success/denial/replay/expiry cases pass; tokens never reach browser.
 
 #### Card 3.5 — Discover provider calendars and permissions
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-022`
 - **Objective:** List calendars for each connected account and persist supported metadata.
 - **Scope:** Edge Function provider calls, normalized calendar metadata, read/write capability and sync health.
 - **Depends on:** 3.3, 3.4.
@@ -235,7 +235,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Multiple accounts/calendars work; read-only calendars are identified; pagination and provider errors are handled.
 
 #### Card 3.6 — Implement connection health and reconnect experience
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-023`
 - **Objective:** Show connection state and allow safe recovery from expired/revoked access.
 - **Scope:** Health state, last successful sync, safe error copy and reconnect CTA.
 - **Depends on:** 3.2, 3.5.
@@ -245,7 +245,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 4 — Availability engine
 
 #### Card 4.1 — Implement working hours and availability settings
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-024`
 - **Objective:** Build host working hours, timezone, buffers, minimum notice and booking horizon.
 - **Scope:** Tables, RLS, settings UI and validation.
 - **Depends on:** 2.4, 3.1.
@@ -253,7 +253,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Settings persist correctly; timezone and date overrides are explicit; invalid or overlapping rules are rejected.
 
 #### Card 4.2 — Implement provider busy-time retrieval
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-025`
 - **Objective:** Retrieve the minimum required busy intervals from selected calendars.
 - **Scope:** Edge Function provider reads, pagination, normalization and bounded caching/freshness rules.
 - **Depends on:** 3.5.
@@ -261,7 +261,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Google/Zoho busy intervals normalize to UTC; private titles/descriptions are not exposed; stale/error behavior is explicit.
 
 #### Card 4.3 — Implement availability calculation and slot generation
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-026`
 - **Objective:** Generate candidate slots from working hours and selected conflict-check calendars.
 - **Scope:** Trusted Edge Function and tested shared logic for timezone, duration, buffers, notice, horizon, overrides and any-calendar conflict rule.
 - **Depends on:** 4.1, 4.2.
@@ -269,7 +269,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Any overlap in any selected check calendar blocks the slot; DST/timezone/buffer cases pass unit tests; no event details leak.
 
 #### Card 4.4 — Build calendar availability UI
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-027`
 - **Objective:** Show unified calendars and computed availability to workspace users.
 - **Scope:** Calendar views, account/calendar filters, timezone display and connection warning states.
 - **Depends on:** 3.6, 4.3.
@@ -279,7 +279,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 5 — Booking links and booking confirmation
 
 #### Card 5.1 — Create booking-link schema and RLS
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-028`
 - **Objective:** Add booking links and separate conflict-check/destination calendar selections.
 - **Scope:** Migrations, slug uniqueness, status constraints and policies.
 - **Depends on:** 3.1, 4.1.
@@ -287,7 +287,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Published link has one destination calendar and one or more conflict-check calendars; invalid configuration cannot publish.
 
 #### Card 5.2 — Build booking-link builder UI
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-029`
 - **Objective:** Allow authorized users to create and manage multiple booking links.
 - **Scope:** Link details, duration, buffers, host, working hours, conflict-check calendars, one destination calendar, preview and publish.
 - **Depends on:** 5.1, 4.4.
@@ -295,7 +295,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Users can create multiple distinct links; calendar selection clearly separates check calendars from destination; invalid settings are explained.
 
 #### Card 5.3 — Build public booking page and slot selection
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-030`
 - **Objective:** Let invitees view a public booking page and choose an available slot without an account.
 - **Scope:** Public link page, booking details, date/time selection, invitee form and accessible responsive layout.
 - **Depends on:** 5.2, 4.3.
@@ -303,7 +303,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Only published link data and computed slots are exposed; no calendar identifiers, event details or tenant-private records leak.
 
 #### Card 5.4 — Implement race-safe booking confirmation
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-031`
 - **Objective:** Confirm a booking safely and create one event in the selected destination calendar.
 - **Scope:** Edge Function orchestration, final availability recheck, transaction/locking, idempotency, provider write, booking state and safe recovery.
 - **Depends on:** 4.3, 5.1, 5.3.
@@ -311,7 +311,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Concurrent requests for the same conflicting slot cannot both confirm; event is written only to destination calendar; confirmed state appears only after successful provider write and committed booking state; uncertain writes are reconciled before retry.
 
 #### Card 5.5 — Build booking success and detail screens
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-032`
 - **Objective:** Show confirmation and booking details safely to invitees and hosts.
 - **Scope:** Confirmation page, details, timezone labels and secure management-link handoff.
 - **Depends on:** 5.4.
@@ -321,7 +321,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 6 — Booking lifecycle and notifications
 
 #### Card 6.1 — Implement secure rescheduling
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-033`
 - **Objective:** Allow authorized invitees/hosts to move a booking to a new valid slot.
 - **Scope:** Hashed expiring management token, new availability check, idempotent update of the existing destination event and audit history.
 - **Depends on:** 5.4.
@@ -329,7 +329,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Expired/invalid tokens fail safely; conflicts are rechecked; provider event is updated rather than duplicated; audit history is recorded.
 
 #### Card 6.2 — Implement secure cancellation
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-034`
 - **Objective:** Cancel bookings and update the destination provider event consistently.
 - **Scope:** Cancellation token/authorization, state transition, provider event cancellation/deletion policy and audit history.
 - **Depends on:** 5.4.
@@ -337,7 +337,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Repeated cancellation is idempotent; unauthorized cancellation is rejected; provider and booking states reconcile.
 
 #### Card 6.3 — Configure transactional email notifications
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-035`
 - **Objective:** Send booking confirmations, changes, cancellations and invitations.
 - **Scope:** Select managed email provider, templates, Edge Function integration and delivery status.
 - **Depends on:** 2.5, 5.4.
@@ -345,7 +345,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Emails use correct timezone and booking details; retries do not send uncontrolled duplicates; secrets remain server-side.
 
 #### Card 6.4 — Add reminders and provider reconciliation schedule
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-036`
 - **Objective:** Schedule reminders and reconcile provider changes where required.
 - **Scope:** Supabase Cron or approved managed scheduler invoking Edge Functions; no self-hosted worker.
 - **Depends on:** 3.5, 6.3.
@@ -355,7 +355,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 7 — Administration and developer capabilities
 
 #### Card 7.1 — Complete organization settings and audit UI
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-037`
 - **Objective:** Complete organization settings, plan display and audit history.
 - **Scope:** Organization profile, timezone, allowed settings, audit table and role-aware controls.
 - **Depends on:** 2.5, 2.6.
@@ -363,7 +363,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Only authorized admins can change settings; audit records are visible according to role; private calendar event details remain restricted.
 
 #### Card 7.2 — Complete platform owner console data views
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-038`
 - **Objective:** Add platform-level organization, request, user, plan and system-health views.
 - **Scope:** RLS-protected views and narrowly scoped Edge Functions only where privileged cross-tenant aggregation is necessary.
 - **Depends on:** 2.5, 7.1.
@@ -371,7 +371,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Platform owner sees operational metadata needed for administration but not private calendar event contents by default; all privileged operations are audited.
 
 #### Card 7.3 — Implement API keys and webhooks (later release)
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-039`
 - **Objective:** Provide scoped organization API keys and signed outbound webhooks.
 - **Scope:** Key generation/hash storage, one-time secret display, scopes, webhook signing, delivery retries and logs.
 - **Depends on:** 7.1, 5.4.
@@ -381,7 +381,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 ### Phase 8 — Quality, security and production release
 
 #### Card 8.1 — Complete RLS and security review
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-040`
 - **Objective:** Audit all tables, policies, Edge Functions, secrets, public routes and privileged operations.
 - **Scope:** Threat review, cross-tenant tests, secret scan, public token/rate-limit review and dependency review.
 - **Depends on:** Phases 2–7.
@@ -389,7 +389,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** No exposed table lacks appropriate RLS; privilege escalation and cross-tenant tests pass; no secrets are bundled or logged; findings are resolved or explicitly accepted.
 
 #### Card 8.2 — Complete availability and booking concurrency tests
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-041`
 - **Objective:** Prove core scheduling invariants under realistic conditions.
 - **Scope:** Multi-calendar conflicts, buffers, timezone/DST, stale provider data, simultaneous booking, retries and ambiguous provider writes.
 - **Depends on:** 4.3, 5.4, 6.1, 6.2.
@@ -397,7 +397,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Automated tests demonstrate no conflicting double confirmation and no duplicate provider event after safe retry/reconciliation.
 
 #### Card 8.3 — Complete end-to-end and responsive QA
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-042`
 - **Objective:** Verify the full experience across roles, devices and failure states.
 - **Scope:** Onboarding, approval, integrations, calendar views, booking links, public booking, reschedule, cancellation, admin and accessibility.
 - **Depends on:** Phases 1–7.
@@ -405,7 +405,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 - **Acceptance:** Critical user journeys pass on supported browsers and mobile widths; loading/empty/error/success states and keyboard accessibility are checked.
 
 #### Card 8.4 — Configure production deployment and operations
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-043`
 - **Objective:** Prepare frontend and Supabase production environments for controlled release.
 - **Scope:** Environment secrets, migrations, Edge Function deployment, OAuth production settings, backups, monitoring, rollback and incident notes.
 - **Depends on:** 8.1–8.3, 0.1, 0.2.
@@ -417,7 +417,7 @@ Do not skip a phase's exit gate. UI can be prototyped with mock data, but do not
 These tasks use managed platform capabilities. Do not introduce a separate backend, self-managed cache cluster, or load balancer just to satisfy a generic checklist. See [`docs/performance.md`](docs/performance.md) for the complete implementation guide and cache policy.
 
 #### Card 9.1 — Establish performance baselines and budgets
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-044`
 - **Objective:** Measure the first complete frontend and define route-specific performance budgets.
 - **Scope:** Lighthouse mobile/desktop, Core Web Vitals where available, bundle analysis, slow query timings and Edge Function latency.
 - **Depends on:** 1.1, 8.3.
@@ -425,7 +425,7 @@ These tasks use managed platform capabilities. Do not introduce a separate backe
 - **Acceptance:** Baseline report is committed; budgets and key routes are documented; no unmeasured performance claims.
 
 #### Card 9.2 — Optimize images, loading and frontend bundles
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-045`
 - **Objective:** Reduce image, JavaScript and CSS delivery cost.
 - **Scope:** Compress/resize images, lazy-load below-the-fold media, split route/heavy component chunks, minify production JS/CSS, defer non-critical scripts and add skeleton states.
 - **Depends on:** 1.2, 1.3, 8.3.
@@ -433,7 +433,7 @@ These tasks use managed platform capabilities. Do not introduce a separate backe
 - **Acceptance:** Production build confirms code splitting/minification; image and loading behavior verified; skeletons and layout stability checked.
 
 #### Card 9.3 — Optimize React interactions and large lists
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-046`
 - **Objective:** Keep interactive screens responsive as data volume grows.
 - **Scope:** Profile and reduce unnecessary re-renders, debounce search/filter inputs, paginate large lists, remove unused dependencies.
 - **Depends on:** 1.3, 8.3.
@@ -441,7 +441,7 @@ These tasks use managed platform capabilities. Do not introduce a separate backe
 - **Acceptance:** Profiling evidence identifies improvements; lists are bounded/paginated; search avoids excessive requests; dependency cleanup passes tests.
 
 #### Card 9.4 — Optimize Supabase database queries and indexes
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-047`
 - **Objective:** Improve hot database paths and eliminate avoidable query overhead.
 - **Scope:** Review query plans, add migration-managed indexes, fix N+1 reads, select only required fields, paginate and batch related reads.
 - **Depends on:** 2.2, 4.1, 5.1, 8.2.
@@ -449,7 +449,7 @@ These tasks use managed platform capabilities. Do not introduce a separate backe
 - **Acceptance:** Hot query plans and before/after timings are recorded; indexes are justified; N+1 patterns are fixed; RLS remains effective.
 
 #### Card 9.5 — Configure managed CDN, caching and connection pooling
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-048`
 - **Objective:** Use safe managed caching and connection pooling without operating additional infrastructure.
 - **Scope:** Frontend host CDN for static assets, Supabase Storage delivery where suitable, safe public/server-side cache rules, bounded tenant-scoped computed-result cache, Supabase managed connection pooler, payload reduction and cache invalidation.
 - **Depends on:** 0.1, 2.1, 8.4.
@@ -457,7 +457,7 @@ These tasks use managed platform capabilities. Do not introduce a separate backe
 - **Acceptance:** Cache keys/TTL/privacy/invalidation are documented; private calendar/OAuth/tenant data is not shared-cached; provider availability is rechecked at confirmation; pooler mode is configured per Supabase guidance.
 
 #### Card 9.6 — Run final Lighthouse and performance regression audit
-- **Notify ID:** `NTF-TBD`
+- **Notify ID:** `NTF-049`
 - **Objective:** Verify the performance improvements and catch regressions before release.
 - **Scope:** Lighthouse mobile/desktop for public booking, login, dashboard, calendar and booking management; review Core Web Vitals, bundles, image delivery, queries and function latency.
 - **Depends on:** 9.1–9.5, 8.4.

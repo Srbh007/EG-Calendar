@@ -8,7 +8,7 @@
 
 1. Create a Notify card for each card in `implementation.md`.
 2. Copy its title, objective, scope, dependencies, documentation list and acceptance criteria.
-3. Replace `NTF-TBD` below with the actual Notify ID.
+3. Replace `NTF-001` below with the actual Notify ID.
 4. Do not start work until the card has a real ID, owner and approved scope.
 5. Update status and evidence when the card is completed.
 
@@ -16,47 +16,47 @@
 
 | Phase | Card | Task | Notify ID | Status |
 |---|---|---|---|---|
-| 0 | 0.1 | Confirm Supabase project and environment strategy | NTF-TBD | Not started |
-| 0 | 0.2 | Verify Google and Zoho API capabilities | NTF-TBD | Not started |
-| 0 | 0.3 | Inspect repository and confirm frontend stack | NTF-TBD | Not started |
-| 0 | 0.4 | Create Notify cards and confirm release gates | NTF-TBD | Not started |
-| 1 | 1.1 | Set up Next.js frontend application | NTF-TBD | Not started |
-| 1 | 1.2 | Implement design tokens and global styles | NTF-TBD | Not started |
-| 1 | 1.3 | Build shared UI primitives | NTF-TBD | Not started |
-| 1 | 1.4 | Build organization workspace shell | NTF-TBD | Not started |
-| 1 | 1.5 | Build platform owner console shell | NTF-TBD | Not started |
-| 2 | 2.1 | Configure Supabase clients and local development | NTF-TBD | Not started |
-| 2 | 2.2 | Create initial database migrations and profile model | NTF-TBD | Not started |
-| 2 | 2.3 | Configure Supabase Auth flows | NTF-TBD | Not started |
-| 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-TBD | Not started |
-| 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-TBD | Not started |
-| 2 | 2.6 | Build team and role management UI | NTF-TBD | Not started |
-| 3 | 3.1 | Create calendar connection schema and RLS | NTF-TBD | Not started |
-| 3 | 3.2 | Build integrations and account management screens | NTF-TBD | Not started |
-| 3 | 3.3 | Implement secure Google OAuth Edge Functions | NTF-TBD | Not started |
-| 3 | 3.4 | Implement secure Zoho OAuth Edge Functions | NTF-TBD | Not started |
-| 3 | 3.5 | Discover provider calendars and permissions | NTF-TBD | Not started |
-| 3 | 3.6 | Implement connection health and reconnect experience | NTF-TBD | Not started |
-| 4 | 4.1 | Implement working hours and availability settings | NTF-TBD | Not started |
-| 4 | 4.2 | Implement provider busy-time retrieval | NTF-TBD | Not started |
-| 4 | 4.3 | Implement availability calculation and slot generation | NTF-TBD | Not started |
-| 4 | 4.4 | Build calendar availability UI | NTF-TBD | Not started |
-| 5 | 5.1 | Create booking-link schema and RLS | NTF-TBD | Not started |
-| 5 | 5.2 | Build booking-link builder UI | NTF-TBD | Not started |
-| 5 | 5.3 | Build public booking page and slot selection | NTF-TBD | Not started |
-| 5 | 5.4 | Implement race-safe booking confirmation | NTF-TBD | Not started |
-| 5 | 5.5 | Build booking success and detail screens | NTF-TBD | Not started |
-| 6 | 6.1 | Implement secure rescheduling | NTF-TBD | Not started |
-| 6 | 6.2 | Implement secure cancellation | NTF-TBD | Not started |
-| 6 | 6.3 | Configure transactional email notifications | NTF-TBD | Not started |
-| 6 | 6.4 | Add reminders and provider reconciliation schedule | NTF-TBD | Not started |
-| 7 | 7.1 | Complete organization settings and audit UI | NTF-TBD | Not started |
-| 7 | 7.2 | Complete platform owner console data views | NTF-TBD | Not started |
-| 7 | 7.3 | Implement API keys and webhooks (later release) | NTF-TBD | Not started |
-| 8 | 8.1 | Complete RLS and security review | NTF-TBD | Not started |
-| 8 | 8.2 | Complete availability and booking concurrency tests | NTF-TBD | Not started |
-| 8 | 8.3 | Complete end-to-end and responsive QA | NTF-TBD | Not started |
-| 8 | 8.4 | Configure production deployment and operations | NTF-TBD | Not started |
+| 0 | 0.1 | Confirm Supabase project and environment strategy | NTF-002 | Done |
+| 0 | 0.2 | Verify Google and Zoho API capabilities | NTF-003 | Done |
+| 0 | 0.3 | Inspect repository and confirm frontend stack | NTF-004 | Done |
+| 0 | 0.4 | Create Notify cards and confirm release gates | NTF-005 | Done |
+| 1 | 1.1 | Set up Next.js frontend application | NTF-006 | Done |
+| 1 | 1.2 | Implement design tokens and global styles | NTF-007 | Not started |
+| 1 | 1.3 | Build shared UI primitives | NTF-008 | Not started |
+| 1 | 1.4 | Build organization workspace shell | NTF-009 | Not started |
+| 1 | 1.5 | Build platform owner console shell | NTF-010 | Not started |
+| 2 | 2.1 | Configure Supabase clients and local development | NTF-011 | Not started |
+| 2 | 2.2 | Create initial database migrations and profile model | NTF-012 | Not started |
+| 2 | 2.3 | Configure Supabase Auth flows | NTF-013 | Not started |
+| 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-014 | Not started |
+| 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-015 | Not started |
+| 2 | 2.6 | Build team and role management UI | NTF-016 | Not started |
+| 3 | 3.1 | Create calendar connection schema and RLS | NTF-017 | Not started |
+| 3 | 3.2 | Build integrations and account management screens | NTF-018 | Not started |
+| 3 | 3.3 | Implement secure Google OAuth Edge Functions | NTF-019 | Not started |
+| 3 | 3.4 | Implement secure Zoho OAuth Edge Functions | NTF-020 | Not started |
+| 3 | 3.5 | Discover provider calendars and permissions | NTF-021 | Not started |
+| 3 | 3.6 | Implement connection health and reconnect experience | NTF-022 | Not started |
+| 4 | 4.1 | Implement working hours and availability settings | NTF-023 | Not started |
+| 4 | 4.2 | Implement provider busy-time retrieval | NTF-024 | Not started |
+| 4 | 4.3 | Implement availability calculation and slot generation | NTF-025 | Not started |
+| 4 | 4.4 | Build calendar availability UI | NTF-026 | Not started |
+| 5 | 5.1 | Create booking-link schema and RLS | NTF-027 | Not started |
+| 5 | 5.2 | Build booking-link builder UI | NTF-028 | Not started |
+| 5 | 5.3 | Build public booking page and slot selection | NTF-029 | Not started |
+| 5 | 5.4 | Implement race-safe booking confirmation | NTF-030 | Not started |
+| 5 | 5.5 | Build booking success and detail screens | NTF-031 | Not started |
+| 6 | 6.1 | Implement secure rescheduling | NTF-032 | Not started |
+| 6 | 6.2 | Implement secure cancellation | NTF-033 | Not started |
+| 6 | 6.3 | Configure transactional email notifications | NTF-034 | Not started |
+| 6 | 6.4 | Add reminders and provider reconciliation schedule | NTF-035 | Not started |
+| 7 | 7.1 | Complete organization settings and audit UI | NTF-036 | Not started |
+| 7 | 7.2 | Complete platform owner console data views | NTF-037 | Not started |
+| 7 | 7.3 | Implement API keys and webhooks (later release) | NTF-038 | Not started |
+| 8 | 8.1 | Complete RLS and security review | NTF-039 | Not started |
+| 8 | 8.2 | Complete availability and booking concurrency tests | NTF-040 | Not started |
+| 8 | 8.3 | Complete end-to-end and responsive QA | NTF-041 | Not started |
+| 8 | 8.4 | Configure production deployment and operations | NTF-042 | Not started |
 
 ## Card detail location
 
@@ -78,11 +78,11 @@ See [`performance.md`](performance.md) for implementation details, cache safety 
 
 | Phase | Card | Task | Notify ID | Status |
 |---|---|---|---|---|
-| 9 | 9.1 | Establish performance baselines and budgets | NTF-TBD | Not started |
-| 9 | 9.2 | Optimize images, loading and frontend bundles | NTF-TBD | Not started |
-| 9 | 9.3 | Optimize React interactions and large lists | NTF-TBD | Not started |
-| 9 | 9.4 | Optimize Supabase database queries and indexes | NTF-TBD | Not started |
-| 9 | 9.5 | Configure managed CDN, caching and connection pooling | NTF-TBD | Not started |
-| 9 | 9.6 | Run final Lighthouse and performance regression audit | NTF-TBD | Not started |
+| 9 | 9.1 | Establish performance baselines and budgets | NTF-043 | Not started |
+| 9 | 9.2 | Optimize images, loading and frontend bundles | NTF-044 | Not started |
+| 9 | 9.3 | Optimize React interactions and large lists | NTF-045 | Not started |
+| 9 | 9.4 | Optimize Supabase database queries and indexes | NTF-046 | Not started |
+| 9 | 9.5 | Configure managed CDN, caching and connection pooling | NTF-047 | Not started |
+| 9 | 9.6 | Run final Lighthouse and performance regression audit | NTF-048 | Not started |
 
 **Managed infrastructure decision:** Do not create a separate load balancer, cache cluster or custom backend for this checklist. Use the frontend host CDN and Supabase-managed connection pooling/capabilities. A dedicated load balancer is out of scope unless measured demand and an approved architecture change justify it.
