@@ -43,6 +43,12 @@
 - Palette baseline: primary `#147D52`, light green `#DDF3E7`, dark highlight `#17231D`, background `#F7F9F7`.
 - Use mostly white/near-white surfaces; avoid clutter, gradients, heavy shadows and excessive cards.
 
+## Environment Strategy
+
+- Local development: Next.js frontend running locally, Supabase local instance for database, auth, and edge functions.
+- Staging/Production: Next.js frontend hosted on standard managed providers (e.g., Vercel), Supabase managed projects in closest required region (e.g., `us-east-1`).
+- Auth state and secrets: Managed by Supabase. Only anon keys exposed to the client.
+
 ## Open verification items
 
 - Verify Google OAuth scopes, account restrictions, free/busy support, event write behavior, quotas and push notifications.
