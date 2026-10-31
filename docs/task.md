@@ -27,20 +27,20 @@
 | 1 | 1.5 | Build platform owner console shell | NTF-009 | Done |
 | 2 | 2.1 | Configure Supabase clients and local development | NTF-010 | Done |
 | 2 | 2.2 | Create initial database migrations and profile model | NTF-011 | Done |
-| 2 | 2.3 | Configure Supabase Auth flows | NTF-012 | Done |
+| 2 | 2.3 | Configure Supabase Auth flows | NTF-012 | Mocked |
 | 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-013 | Done |
-| 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-014 | Done |
-| 2 | 2.6 | Build team and role management UI | NTF-015 | Done |
+| 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-014 | Mocked |
+| 2 | 2.6 | Build team and role management UI | NTF-015 | Mocked |
 | 3 | 3.1 | Create calendar connection schema and RLS | NTF-016 | Done |
-| 3 | 3.2 | Build integrations and account management screens | NTF-017 | Done |
-| 3 | 3.3 | Implement secure Google OAuth Edge Functions | NTF-019 | Done |
-| 3 | 3.4 | Implement secure Zoho OAuth Edge Functions | NTF-020 | Done |
-| 3 | 3.5 | Discover provider calendars and permissions | NTF-021 | Done |
-| 3 | 3.6 | Implement connection health and reconnect experience | NTF-018 | Done |
-| 4 | 4.1 | Implement working hours and availability settings | NTF-TBD | Not started |
-| 4 | 4.2 | Implement provider busy-time retrieval | NTF-TBD | Not started |
-| 4 | 4.3 | Implement availability calculation and slot generation | NTF-TBD | Not started |
-| 4 | 4.4 | Build calendar availability UI | NTF-TBD | Not started |
+| 3 | 3.2 | Build integrations and account management screens | NTF-017 | Mocked |
+| 3 | 3.3 | Implement secure Google OAuth Edge Functions | NTF-019 | Mocked |
+| 3 | 3.4 | Implement secure Zoho OAuth Edge Functions | NTF-020 | Mocked |
+| 3 | 3.5 | Discover provider calendars and permissions | NTF-021 | Mocked |
+| 3 | 3.6 | Implement connection health and reconnect experience | NTF-018 | Mocked |
+| 4 | 4.1 | Implement working hours and availability settings | NTF-022 | Done |
+| 4 | 4.2 | Implement provider busy-time retrieval | NTF-023 | Mocked |
+| 4 | 4.3 | Implement availability calculation and slot generation | NTF-024 | Mocked |
+| 4 | 4.4 | Build calendar availability UI | NTF-025 | Mocked |
 | 5 | 5.1 | Create booking-link schema and RLS | NTF-TBD | Not started |
 | 5 | 5.2 | Build booking-link builder UI | NTF-TBD | Not started |
 | 5 | 5.3 | Build public booking page and slot selection | NTF-TBD | Not started |
