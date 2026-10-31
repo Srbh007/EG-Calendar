@@ -16,16 +16,16 @@
 
 | Phase | Card | Task | Notify ID | Status |
 |---|---|---|---|---|
-| 0 | 0.1 | Confirm Supabase project and environment strategy | NTF-TBD | Not started |
-| 0 | 0.2 | Verify Google and Zoho API capabilities | NTF-TBD | Not started |
-| 0 | 0.3 | Inspect repository and confirm frontend stack | NTF-TBD | Not started |
-| 0 | 0.4 | Create Notify cards and confirm release gates | NTF-TBD | Not started |
-| 1 | 1.1 | Set up Next.js frontend application | NTF-TBD | Not started |
+| 0 | 0.1 | Confirm Supabase project and environment strategy | NTF-TBD | Done |
+| 0 | 0.2 | Verify Google and Zoho API capabilities | NTF-TBD | Done |
+| 0 | 0.3 | Inspect repository and confirm frontend stack | NTF-TBD | Done |
+| 0 | 0.4 | Create Notify cards and confirm release gates | NTF-TBD | Done |
+| 1 | 1.1 | Set up Next.js frontend application | NTF-TBD | Done |
 | 1 | 1.2 | Implement design tokens and global styles | NTF-TBD | Not started |
 | 1 | 1.3 | Build shared UI primitives | NTF-TBD | Not started |
 | 1 | 1.4 | Build organization workspace shell | NTF-TBD | Not started |
 | 1 | 1.5 | Build platform owner console shell | NTF-TBD | Not started |
-| 2 | 2.1 | Configure Supabase clients and local development | NTF-TBD | Not started |
+| 2 | 2.1 | Configure Supabase clients and local development | NTF-TBD | Done |
 | 2 | 2.2 | Create initial database migrations and profile model | NTF-TBD | Not started |
 | 2 | 2.3 | Configure Supabase Auth flows | NTF-TBD | Not started |
 | 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-TBD | Not started |
