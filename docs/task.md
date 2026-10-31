@@ -27,10 +27,10 @@
 | 1 | 1.5 | Build platform owner console shell | NTF-009 | Done |
 | 2 | 2.1 | Configure Supabase clients and local development | NTF-010 | Done |
 | 2 | 2.2 | Create initial database migrations and profile model | NTF-011 | Done |
-| 2 | 2.3 | Configure Supabase Auth flows | NTF-TBD | Not started |
-| 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-TBD | Not started |
-| 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-TBD | Not started |
-| 2 | 2.6 | Build team and role management UI | NTF-TBD | Not started |
+| 2 | 2.3 | Configure Supabase Auth flows | NTF-012 | Done |
+| 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-013 | Done |
+| 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-014 | Done |
+| 2 | 2.6 | Build team and role management UI | NTF-015 | Done |
 | 3 | 3.1 | Create calendar connection schema and RLS | NTF-TBD | Not started |
 | 3 | 3.2 | Build integrations and account management screens | NTF-TBD | Not started |
 | 3 | 3.3 | Implement secure Google OAuth Edge Functions | NTF-TBD | Not started |
