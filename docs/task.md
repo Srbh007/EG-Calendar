@@ -78,11 +78,11 @@ See [`performance.md`](performance.md) for implementation details, cache safety 
 
 | Phase | Card | Task | Notify ID | Status |
 |---|---|---|---|---|
-| 9 | 9.1 | Establish performance baselines and budgets | NTF-TBD | Not started |
-| 9 | 9.2 | Optimize images, loading and frontend bundles | NTF-TBD | Not started |
-| 9 | 9.3 | Optimize React interactions and large lists | NTF-TBD | Not started |
-| 9 | 9.4 | Optimize Supabase database queries and indexes | NTF-TBD | Not started |
-| 9 | 9.5 | Configure managed CDN, caching and connection pooling | NTF-TBD | Not started |
-| 9 | 9.6 | Run final Lighthouse and performance regression audit | NTF-TBD | Not started |
+| 9 | 9.1 | Establish performance baselines and budgets | NTF-042 | Done |
+| 9 | 9.2 | Optimize images, loading and frontend bundles | NTF-043 | Done |
+| 9 | 9.3 | Optimize React interactions and large lists | NTF-044 | Done |
+| 9 | 9.4 | Optimize Supabase database queries and indexes | NTF-045 | Done |
+| 9 | 9.5 | Configure managed CDN, caching and connection pooling | NTF-046 | Done |
+| 9 | 9.6 | Run final Lighthouse and performance regression audit | NTF-047 | Done |
 
 **Managed infrastructure decision:** Do not create a separate load balancer, cache cluster or custom backend for this checklist. Use the frontend host CDN and Supabase-managed connection pooling/capabilities. A dedicated load balancer is out of scope unless measured demand and an approved architecture change justify it.
