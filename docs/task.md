@@ -41,11 +41,11 @@
 | 4 | 4.2 | Implement provider busy-time retrieval | NTF-023 | Mocked |
 | 4 | 4.3 | Implement availability calculation and slot generation | NTF-024 | Mocked |
 | 4 | 4.4 | Build calendar availability UI | NTF-025 | Mocked |
-| 5 | 5.1 | Create booking-link schema and RLS | NTF-TBD | Not started |
-| 5 | 5.2 | Build booking-link builder UI | NTF-TBD | Not started |
-| 5 | 5.3 | Build public booking page and slot selection | NTF-TBD | Not started |
-| 5 | 5.4 | Implement race-safe booking confirmation | NTF-TBD | Not started |
-| 5 | 5.5 | Build booking success and detail screens | NTF-TBD | Not started |
+| 5 | 5.1 | Create booking-link schema and RLS | NTF-026 | Done |
+| 5 | 5.2 | Build booking-link builder UI | NTF-027 | Mocked |
+| 5 | 5.3 | Build public booking page and slot selection | NTF-028 | Mocked |
+| 5 | 5.4 | Implement race-safe booking confirmation | NTF-029 | Mocked |
+| 5 | 5.5 | Build booking success and detail screens | NTF-030 | Mocked |
 | 6 | 6.1 | Implement secure rescheduling | NTF-TBD | Not started |
 | 6 | 6.2 | Implement secure cancellation | NTF-TBD | Not started |
 | 6 | 6.3 | Configure transactional email notifications | NTF-TBD | Not started |
