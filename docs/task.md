@@ -31,12 +31,12 @@
 | 2 | 2.4 | Implement RLS policies for profiles and organizations | NTF-013 | Done |
 | 2 | 2.5 | Implement organization requests, approvals and invitations | NTF-014 | Done |
 | 2 | 2.6 | Build team and role management UI | NTF-015 | Done |
-| 3 | 3.1 | Create calendar connection schema and RLS | NTF-TBD | Not started |
-| 3 | 3.2 | Build integrations and account management screens | NTF-TBD | Not started |
+| 3 | 3.1 | Create calendar connection schema and RLS | NTF-016 | Done |
+| 3 | 3.2 | Build integrations and account management screens | NTF-017 | Done |
 | 3 | 3.3 | Implement secure Google OAuth Edge Functions | NTF-TBD | Not started |
 | 3 | 3.4 | Implement secure Zoho OAuth Edge Functions | NTF-TBD | Not started |
 | 3 | 3.5 | Discover provider calendars and permissions | NTF-TBD | Not started |
-| 3 | 3.6 | Implement connection health and reconnect experience | NTF-TBD | Not started |
+| 3 | 3.6 | Implement connection health and reconnect experience | NTF-018 | Done |
 | 4 | 4.1 | Implement working hours and availability settings | NTF-TBD | Not started |
 | 4 | 4.2 | Implement provider busy-time retrieval | NTF-TBD | Not started |
 | 4 | 4.3 | Implement availability calculation and slot generation | NTF-TBD | Not started |
