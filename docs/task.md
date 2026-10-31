@@ -46,10 +46,10 @@
 | 5 | 5.3 | Build public booking page and slot selection | NTF-028 | Mocked |
 | 5 | 5.4 | Implement race-safe booking confirmation | NTF-029 | Mocked |
 | 5 | 5.5 | Build booking success and detail screens | NTF-030 | Mocked |
-| 6 | 6.1 | Implement secure rescheduling | NTF-TBD | Not started |
-| 6 | 6.2 | Implement secure cancellation | NTF-TBD | Not started |
-| 6 | 6.3 | Configure transactional email notifications | NTF-TBD | Not started |
-| 6 | 6.4 | Add reminders and provider reconciliation schedule | NTF-TBD | Not started |
+| 6 | 6.1 | Implement secure rescheduling | NTF-031 | Mocked |
+| 6 | 6.2 | Implement secure cancellation | NTF-032 | Mocked |
+| 6 | 6.3 | Configure transactional email notifications | NTF-033 | Mocked |
+| 6 | 6.4 | Add reminders and provider reconciliation schedule | NTF-034 | Done |
 | 7 | 7.1 | Complete organization settings and audit UI | NTF-TBD | Not started |
 | 7 | 7.2 | Complete platform owner console data views | NTF-TBD | Not started |
 | 7 | 7.3 | Implement API keys and webhooks (later release) | NTF-TBD | Not started |
