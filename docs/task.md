@@ -53,10 +53,10 @@
 | 7 | 7.1 | Complete organization settings and audit UI | NTF-035 | Mocked |
 | 7 | 7.2 | Complete platform owner console data views | NTF-036 | Mocked |
 | 7 | 7.3 | Implement API keys and webhooks (later release) | NTF-037 | Done |
-| 8 | 8.1 | Complete RLS and security review | NTF-TBD | Not started |
-| 8 | 8.2 | Complete availability and booking concurrency tests | NTF-TBD | Not started |
-| 8 | 8.3 | Complete end-to-end and responsive QA | NTF-TBD | Not started |
-| 8 | 8.4 | Configure production deployment and operations | NTF-TBD | Not started |
+| 8 | 8.1 | Complete RLS and security review | NTF-038 | Done |
+| 8 | 8.2 | Complete availability and booking concurrency tests | NTF-039 | Done |
+| 8 | 8.3 | Complete end-to-end and responsive QA | NTF-040 | Done |
+| 8 | 8.4 | Configure production deployment and operations | NTF-041 | Done |
 
 ## Card detail location
 
