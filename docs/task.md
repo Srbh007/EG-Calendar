@@ -50,9 +50,9 @@
 | 6 | 6.2 | Implement secure cancellation | NTF-032 | Mocked |
 | 6 | 6.3 | Configure transactional email notifications | NTF-033 | Mocked |
 | 6 | 6.4 | Add reminders and provider reconciliation schedule | NTF-034 | Done |
-| 7 | 7.1 | Complete organization settings and audit UI | NTF-TBD | Not started |
-| 7 | 7.2 | Complete platform owner console data views | NTF-TBD | Not started |
-| 7 | 7.3 | Implement API keys and webhooks (later release) | NTF-TBD | Not started |
+| 7 | 7.1 | Complete organization settings and audit UI | NTF-035 | Mocked |
+| 7 | 7.2 | Complete platform owner console data views | NTF-036 | Mocked |
+| 7 | 7.3 | Implement API keys and webhooks (later release) | NTF-037 | Done |
 | 8 | 8.1 | Complete RLS and security review | NTF-TBD | Not started |
 | 8 | 8.2 | Complete availability and booking concurrency tests | NTF-TBD | Not started |
 | 8 | 8.3 | Complete end-to-end and responsive QA | NTF-TBD | Not started |
