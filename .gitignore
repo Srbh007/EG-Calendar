@@ -1,0 +1,13 @@
+node_modules/
+.next/
+*.log
+.DS_Store
+.env*
+!.env.example
+dist/
+build/
+src/node_modules/
+src/.next/
+docs/
+supabase/
+src/
